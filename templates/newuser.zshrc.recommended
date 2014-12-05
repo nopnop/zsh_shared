@@ -1,0 +1,3 @@
+# Load default zsh configuration managed by sysadmin
+# Do not change this unless you know what you do ...
+source /usr/local/lib/zsh_shared/zshrc

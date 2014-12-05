@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+echo "Upgrade zsh_shared ..."
+cd /usr/local/lib/zsh_shared && sudo git pull
+
+echo "Upgrade oh-my-zsh ..."
+cd /usr/local/lib/oh-my-zsh && sudo git pull

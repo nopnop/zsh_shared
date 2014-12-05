@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Based on https://gist.github.com/3666392
+
+# Output a summary of git status for many git repository
+#
+# Summary sample :
+#
+#     // Commited and pushed :
+#     ./barfoo : [Ok] (branch name)
+#
+#     // Untracked
+#     ./barfoo : [Untracked] (branch name)
+#
+#     // Changes not staged for commit :
+#     ./foobar : [modified] (branch name)
+#
+#     // Changes to be committed (staged, not commited) :
+#     ./foobar : [Staged] (branch name)
+#
+#     // Your branch is ahead (not pushed) :
+#     ./foobar : [Unpushed] (branch name)
+#
+#     // Your branch is behind (changes on remote are not merged) :
+#     ./foobar : [Unmerged] (branch name)
+#
+# usages:
+#       // List status of all git repository located under current working directory (./*)
+#       gstatus
+#
+#       // List status of one or many git repository
+#       // With source_dir args are directories containing git repositories :
+#       gstatus source_dir [source_dir] ...
+
+# Term colors
+red="\033[00;31m"
+green="\033[00;32m"
+yellow="\033[00;33m"
+blue="\033[00;34m"
+purple="\033[00;35m"
+cyan="\033[00;36m"
+reset="\033[00m"
+
+
+# source_dir arguments
+if [ $# -eq 0 ] ; then
+	ARGS="."
+else
+	ARGS=$@
+fi
+
+# For each source_dir
+for i in $ARGS ; do
+	# Got each git repository
+	for gitdir in `find $i -name .git` ; do
+		( working=$(dirname $gitdir)
+			cd $working
+			RES=$(git status | grep -E '^# (Changes|Untracked|Your branch)')
+			BRANCH_NAME=$(git symbolic-ref --short -q HEAD) || BRANCH_NAME="(unnamed branch)"
+			STAT=""
+			grep -e 'Untracked' <<<${RES} >/dev/null 2>&1
+			if [ $? -eq 0 ] ; then
+				STAT=" $red[Untracked]$reset"
+			fi
+			grep -e 'Changes not staged for commit' <<<${RES} >/dev/null 2>&1
+			if [ $? -eq 0 ] ; then
+				STAT="$STAT $red[Modified]$reset"
+			fi
+			grep -e 'Changes to be committed' <<<${RES} >/dev/null 2>&1
+			if [ $? -eq 0 ] ; then
+				STAT="$STAT $green[Staged]$reset"
+			fi
+			grep -e 'Your branch is ahead' <<<${RES} >/dev/null 2>&1
+			if [ $? -eq 0 ] ; then
+				STAT="$STAT $yellow[Unpushed]$reset"
+			fi
+			grep -e 'Your branch is behind' <<<${RES} >/dev/null 2>&1
+			if [ $? -eq 0 ] ; then
+				STAT="$STAT $cyan[Unmerged]$reset"
+			fi
+
+			if [ -n "$STAT" ] ; then
+				echo -e "$working :$STAT $blue($BRANCH_NAME)$reset"
+			else
+				echo -e "$working :$green [Ok]$reset $blue($BRANCH_NAME)$reset"
+			fi
+		)
+	done
+done
+
