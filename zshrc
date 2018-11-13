@@ -11,7 +11,7 @@ DISABLE_AUTO_UPDATE=true
 
 
 # Path
-export PATH="/usr/local/bin:$PATH:$HOME/bin:$ZSH_BIN:./bin:./node_modules/.bin"
+export PATH="/usr/local/bin:$PATH:$HOME/bin:$ZSH_BIN"
 
 # Lang configuration
 export LC_CTYPE=en_US.UTF-8
