@@ -21,7 +21,7 @@ export LC_ALL=en_US.UTF-8
 ZSH_THEME=${ZSH_THEME:-"noj"}
 
 # List of default plugins to load
-plugins=${plugins:-"(git git-flow noj)"}
+#plugins=${plugins:-"(git git-flow noj)"}
 
 # Prepare
 source $ZSH/oh-my-zsh.sh
